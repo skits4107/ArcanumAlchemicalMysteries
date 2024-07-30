@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package net.skits4107.arcanum;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
