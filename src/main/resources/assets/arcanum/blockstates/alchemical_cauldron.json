@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "filled=false": {"model":"arcanum:block/alchemical_cauldron_empty"},
+    "filled=true": {"model":"arcanum:block/alchemical_cauldron_full"}
+  }
+
+}
