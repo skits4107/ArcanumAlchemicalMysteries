@@ -1,6 +1,11 @@
 package net.skits4107.arcanum.block.custom;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -13,12 +18,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.skits4107.arcanum.block.entity.AlchemicalCauldronEntity;
 import net.skits4107.arcanum.block.entity.ModBlockEntities;
+import net.skits4107.arcanum.item.ModItems;
 import org.jetbrains.annotations.Nullable;
 
 public class AlchemicalCauldron extends BaseEntityBlock {
@@ -79,5 +86,40 @@ public class AlchemicalCauldron extends BaseEntityBlock {
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPE;
+    }
+
+    @Override
+    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (pLevel.isClientSide){
+            return InteractionResult.PASS;
+        }
+        if (!pHand.equals(InteractionHand.MAIN_HAND)){
+            return InteractionResult.PASS;
+        }
+        ItemStack item = pPlayer.getItemInHand(pHand);
+        if (item.is(Items.WATER_BUCKET)){
+            boolean filled = pState.getValue(FILLED);
+            if (!filled){
+                item.shrink(1);
+                pLevel.setBlock(pPos, pState.setValue(FILLED, true), 3);
+                //give empty bucket
+                pPlayer.getInventory().add((new ItemStack(Items.BUCKET)));
+                //indicate successful interaction
+                return InteractionResult.CONSUME;
+            }
+        }
+        else if (item.is(Items.BUCKET)){
+            boolean filled = pState.getValue(FILLED);
+            if (filled){
+                item.shrink(1);
+                pLevel.setBlock(pPos, pState.setValue(FILLED, false), 3);
+                pPlayer.getInventory().add((new ItemStack(Items.WATER_BUCKET)));
+                //indicate successful interaction
+                return InteractionResult.CONSUME;
+            }
+        }
+
+        return InteractionResult.PASS;
+
     }
 }
