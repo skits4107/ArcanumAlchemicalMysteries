@@ -96,6 +96,7 @@ public class AlchemicalCauldron extends BaseEntityBlock {
         if (!pHand.equals(InteractionHand.MAIN_HAND)){
             return InteractionResult.PASS;
         }
+        //logic for putting water in and out of cauldron
         ItemStack item = pPlayer.getItemInHand(pHand);
         if (item.is(Items.WATER_BUCKET)){
             boolean filled = pState.getValue(FILLED);
@@ -113,6 +114,7 @@ public class AlchemicalCauldron extends BaseEntityBlock {
             if (filled){
                 item.shrink(1);
                 pLevel.setBlock(pPos, pState.setValue(FILLED, false), 3);
+                //give water bucket
                 pPlayer.getInventory().add((new ItemStack(Items.WATER_BUCKET)));
                 //indicate successful interaction
                 return InteractionResult.CONSUME;
@@ -122,4 +124,6 @@ public class AlchemicalCauldron extends BaseEntityBlock {
         return InteractionResult.PASS;
 
     }
+
+
 }
